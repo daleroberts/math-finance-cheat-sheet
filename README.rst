@@ -3,8 +3,6 @@ Mathematical finance cheat sheet
 
 A one page cheat sheet (double-sided) on some of the main tools and models used in Mathematical Finance.
 
-Download PDF version `here <http://github.com/daleroberts/math-finance-cheat-sheet/master/math-finance-cheat-sheet.pdf>`
-
 .. image:: https://rawgithub.com/daleroberts/math-finance-cheat-sheet/master/thumb.png
 
 
