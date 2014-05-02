@@ -1,0 +1,370 @@
+% Dale Roberts <dale.o.roberts@gmail.com> - Copyright (c) 2011-2014
+\documentclass[twocolumn]{amsart}
+\usepackage[pdftex, a4paper, margin=0.7cm, nohead, nofoot]{geometry}
+\usepackage[utopia]{mathdesign}
+\usepackage{amsmath}
+\usepackage{setspace}
+\usepackage{scalefnt}
+\usepackage{microtype}
+\usepackage[absolute]{textpos}
+\usepackage[compact]{titlesec}
+
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\Q}{\mathbf{Q}}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\EP}{\mathbf{E}_\mathbf{P}}
+\newcommand{\EQ}{\mathbf{E}_\mathbf{Q}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\R}{\mathbf{R}}
+\newcommand{\Normal}{\mathbf{N}}
+\newcommand{\Cov}{\operatorname{\textbf{Cov}}}
+\newcommand{\Call}{\mathcal{C}}
+\newcommand{\Put}{\mathcal{P}}
+\newcommand{\QV}[1]{\langle#1\rangle}
+\newcommand{\sE}{\mathcal{E}}
+\newcommand{\tW}{\widetilde W}
+
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\TPHorizModule}{30mm}
+\setlength{\TPVertModule}{\TPHorizModule}
+\textblockorigin{10mm}{10mm} % start everything near the top-left corner
+\titleformat{\section}{\centering\selectfont\bf}{}{0em}{}
+
+\def\parsedate #1:20#2#3#4#5#6#7#8\empty{#6#7/#4#5/20#2#3\parsetime#8\empty}
+\def\parsetime #1#2#3#4#5\empty{ #1#2:#3#4}
+\def\moddate#1{\expandafter\parsedate\pdffilemoddate{#1}\empty}
+
+
+\begin{document}
+\pagestyle{empty}
+\thispagestyle{empty}
+\setstretch{0.8}
+\scalefont{0.8}
+
+\begin{center}
+\textbf{MATHEMATICAL FINANCE CHEAT SHEET}
+\vskip0.2em
+\end{center}
+
+\section*{Normal Random Variables}
+A random variable $X$ is Normal $\Normal(\mu,\sigma^2)$ (aka. \emph{Gaussian}) under a measure $\P$ if and only if
+\[ \EP\left[e^{\theta X}\right] = e^{\theta \mu + \frac{1}{2} \theta^2 \sigma^2}, \quad \text{for all real $\theta$}. \]
+A standard normal $Z \sim \Normal(0,1)$ under a measure $\P$ has density
+\[ \phi(x) = \frac{1}{\sqrt{2\pi}} e^{-x^2/2}.\quad\quad\P[ Z \le x ] = \Phi(x) := \int_{-\infty}^x \phi(z)\,dz.\]
+
+Let $X = (X_1, X_2, \ldots, X_n)'$ with $X_i \sim \Normal(\mu_i, q_{ii})$ and $\Cov[X_i,X_j]=q_{ij}$ for $i,j=1, \ldots, n$. We call $\mu := (\mu_1, \ldots, \mu_n)'$ the \emph{mean} and $Q:=(q_{ij})_{i,j=1}^n$ the \emph{covariance matrix} of $X$. Assume $\det Q > 0$, then $X$ has a \emph{multivariate normal distribution} if it has the density
+\begin{equation*}
+    \phi(x) = \frac{1}{\sqrt{(2\pi)^n \det Q}} \exp\left( - \frac12 (x-\mu)' Q^{-1} (x-\mu)\right), \quad x\in \R^n.
+\end{equation*}
+We write $X \sim \Normal(\mu, Q)$ if this is the case. Alternatively, $X \sim \Normal(\mu, Q)$ under $\P$ if and only if
+\begin{equation*}
+    \EP[e^{\theta' X}] = \exp\left(\theta'\mu + \frac12 \theta' Q \theta\right), \quad \text{for all $\theta \in \R^n$}.
+\end{equation*}
+If $Z \sim \Normal(0,Q)$ and $c \in \R^n$ then $X = c' Z \sim \Normal(0,c'Qc)$. If $C \in \R^{m \times n}$ (i.e., $m \times n$ matrix) then $X = CZ \sim \Normal(0, CQC')$ and $CQC'$ is a $m \times m$ covariance matrix.
+
+\section*{Gaussian Shifts}
+
+If $Z \sim \Normal(0,1)$ under a measure $\P$, $h$ is an integrable function, and $c$ is a constant then
+\[ \EP[e^{c Z} h(Z)] = e^{c^2/2} \EP[h(Z+c)]. \]
+
+Let $X \sim \Normal(0, Q)$, $h$ be a integrable function of $x \in \R^n$, and $c \in \R^n$. Then
+\begin{equation*}
+    \EP[ e^{c' X} h(X)] = e^{\frac12 c'Q c} \EP[ h(X+c)].
+\end{equation*}
+
+\section*{Correlating Brownian Motions}
+Let $(W(t))_{t \ge 0}$ and $(\tW(t))_{t \ge 0}$ be independent Brownian motions. Given a correlation coefficient $\rho \in [-1,1]$, define
+\begin{equation*}
+    \widehat W(t) := \rho W(t) + \sqrt{1-\rho^2} \tW(t),
+\end{equation*}
+then $(\widehat W(t))_{t \ge 0}$ is a Brownian motion and $\E[W(t) \widehat W(t)] = \rho t$.
+
+\section*{Identifying Martingales}
+
+If $X_t = X(t)$ is a diffusion process satisfying $$dX(t) = \mu(t,X_t)\,dt + \sigma(t,X_t) dW(t)$$ and $\EP[(\int_0^T \sigma(s,X_s)^2\,ds)^{1/2}] < \infty$, then
+\[ X \text{ is a martingale} \iff X \text{ is driftless (i.e., $\mu(t) \equiv 0$ with $\P$-prob. 1).} \]
+
+\section*{Novikov's Condition}
+
+In the case $dX(t) = \sigma(t) X(t)\,dW(t)$ for some $\F$-previsible process $(\sigma(t))_{t \ge 0}$, then we have the simpler condition
+\[ \EP \left[ \exp\left(\frac{1}{2} \int_0^T \sigma(s)^2\,ds\right) \right] < \infty\, \Rightarrow \, X \text{ is a martingale}. \]
+
+
+\section*{It\^o's Formula}
+For $X_t=X(t)$ given by $dX(t) = \mu(t)\,dt + \sigma(t)\,dW(t)$ and a function $g(t,x)$ that is twice differentiable in $x$ and once in $t$. Then for $Y(t) = g(t,X_t)$, we have
+\[
+dY(t) = \frac{\partial g}{\partial t}(t,X_t)\,dt + \frac{\partial g}{\partial x}(t,X_t)\,dX_t + \frac{1}{2} \sigma(t)^2 \frac{\partial ^2 g}{\partial x^2}(t,X_t)dt.
+\]
+
+\section*{The Product Rule}
+Given $X(t)$ and $Y(t)$ adapted to the same Brownian motion $(W(t))_{t \ge 0}$,
+\[
+    dX(t) = \mu(t)dt +\sigma(t)dW(t), \quad
+    dY(t) = \nu(t)\,dt + \rho(t)\,dW(t).
+\]
+Then $d(X(t) Y(t)) = X(t)\,d Y(t) + Y(t)\,dX(t) + \underbrace{d\QV{X,Y}(t)}_{\sigma(t) \rho(t)\,dt}$.
+
+In the other case, if $X(t)$ and $Y(t)$ are adapted to two different and independent Brownian motions $(W(t))_{t \ge 0} $ and $(\tW(t))_{t \ge 0}$,
+\[
+    dX(t) =  \mu(t)\,dt + \sigma(t) \,dW(t), \quad
+    dY(t) =  \nu(t)\,dt + \rho(t)\,d\tW(t).
+\]
+Then $d(X(t) Y(t)) = X(t) \,dY(t) + Y(t)\,dX(t)$ as $d\QV{X,Y}(t) = 0$.
+
+\section*{Radon-Nikod\'ym Derivative}
+
+Given $\P$ and $\Q$ equivalent measures and a time horizon $T$, we can define a random variable $\frac{d\Q}{d\P}$ defined on $\P$-possible paths, taking positive real values, such that
+\begin{itemize}
+    \item $\displaystyle \EQ[X_T] = \EP\left[\frac{d\Q}{d\P} X_T \right]$, for all claims $X_T$ knowable by time $T$,
+    \item $\displaystyle \EQ[X_t | \F_s] = \zeta_s^{-1} \EP\left[\zeta_t X_t|\F_s\right]$, for $s \le t \le T$,
+\end{itemize}
+where $\zeta_t$ is the process $\EP[\frac{d \Q}{d \P} | \F_t]$.
+
+\section*{Cameron-Martin-Girsanov Theorem}
+
+If $(W(t))_{t \ge 0}$ is a $\P$-Brownian motion and $(\gamma(t))_{t \ge 0}$ is an $\F$-previsible process satisfying the boundedness condition $\EP\left[\exp\left(\frac{1}{2} \int_0^T\gamma(t)^2\,dt\right)\right] < \infty$, then there exists a measure $\Q$ such that:
+\begin{itemize}
+    \item $\Q$ is equivalent to $\P$,
+    \item $\displaystyle \frac{d \Q}{d \P} = \exp\left(- \int_0^T \gamma(t)\,dW(t) - \frac{1}{2} \int_0^T \gamma(t)^2\,dt \right)$,
+    \item $\tW(t) := W(t) + \int_0^t \gamma(s)\,ds$ is a $\Q$-Brownian motion.
+\end{itemize}
+In other words, $W(t)$ is a drifting $\Q$-Brownian motion with drift $-\gamma(t)$ at time $t$.
+
+\section*{Cameron-Martin-Girsanov Converse}
+
+If $(W(t))_{t \ge 0}$ is a $\P$-Brownian motion, and $\Q$ is a measure equivalent to $\P$, then there exists a $\F$-previsible process $(\gamma(t))_{t \ge 0}$ such that
+\[ \tW(t) := W(t) + \int_0^t \gamma(s)\,ds \]
+is a $\Q$-Brownian motion. That is, $W(t)$ plus drift $\gamma(t)$ is a $\Q$-Brownian motion. Additionally,
+\[ \frac{d \Q}{d \P} = \exp\left(-\int_0^t \gamma(t)\,dW(t) - \frac{1}{2} \int_0^T \gamma(t)^2\,dt\right).\]
+
+\section*{Martingale Representation Theorem}
+
+Suppose $(M(t))_{t \ge 0}$ is a $\Q$-martingale process whose volatility $\sqrt{\EQ[M(t)^2]} = \sigma(t)$ satisfies $\sigma(t) \ne 0$ for all $t$ (with $\Q$-probability one). Then if $(N(t))_{t \ge 0}$ is any other $\Q$-martingale, there exists an $\F$-previsible process $(\phi(t))_{t \ge 0}$ such that $\int_0^T \phi(t)^2 \sigma(t)^2\,dt < \infty$ (with $\Q$-prob. one), and $N$ can be written as
+\[ N(t) = N(0) + \int_0^t \phi(s)\,dM(s), \]
+or in differential form, $dN(t) = \phi(t)\,dM(s)$. Further, $\phi$ is (essentially) unique.
+
+\section*{Multidimensional Diffusions, Quadratic Covariation, and It\^o's Formula}
+
+If $X := (X_1, X_2, \ldots, X_n)'$ is a $n$-dimensional diffusion process with form
+\begin{equation*}
+    X(t) = X(0) + \int_0^t \mu(s)\,ds + \int_0^t \Sigma(s)\,dW(s),
+\end{equation*}
+where $\Sigma(t) \in \R^{n \times m}$ and $W$ is a $m$-dimensional Brownian motion. The \emph{quadration covariation} of the components $X_i$ and $X_j$ is
+\begin{equation*}
+    \QV{X_i,X_j}(t) = \int_0^t \Sigma_i(s)' \Sigma_j(s)\,ds,
+\end{equation*}
+or in differential form $d\QV{X_i,X_j}(t) = \Sigma_i(t)'\Sigma_j(t)\,dt$, where $\Sigma_i(t)$ is the $i^\text{th}$ column of $\Sigma(t)$. The \emph{quadratic variation} of $X_i(t)$ is $\QV{X_i}(t) = \int_0^t \Sigma_i(s)' \Sigma_i(s)\,ds$.
+
+The \emph{multi-dimensional It\^{o} formula} for $Y(t) = f(t, X_1(t), \ldots, X_n(t))$
+is
+\begin{align*}
+    d Y(t) = &\frac{\partial f}{\partial t} (t,X_1(t), \ldots, X_n(t)) dt
+            + \sum_{i=1}^n \frac{\partial f}{\partial x_i} (t,X_1(t), \ldots, X_n(t))dX_i(t) \\
+            &+ \frac{1}{2}\sum_{i,j\,=1}^n \frac{\partial^2 f}{\partial x_i \partial x_j} (t,X_1(t), \ldots, X_n(t)) d \QV{X_i, X_j}(t).
+\end{align*}
+
+
+The \emph{(vector-valued) multi-dimensional It\^{o} formula} for
+\begin{equation*}
+    Y(t) = f(t,X(t)) = (f_1(t,X(t)), \ldots, f_n(t,X(t)))'
+\end{equation*}
+where $f_k(t, X) = f_k(t, X_1, \ldots, X_n)$ and $Y(t) = (Y_1(t), Y_2(t), \ldots, Y_n(t))'$ is given component-wise (for $k=1, \ldots, n$) as
+\begin{align*}
+    d Y_k(t) = \frac{\partial f_k(t,X(t))}{\partial t} dt
+            &+ \sum_{i=1}^n \frac{\partial f_k(t,X(t))}{\partial x_i} dX_i(t) \\
+            &+ \frac{1}{2}\sum_{i,j\,=1}^n \frac{\partial^2 f_k(t,X(t))}{\partial x_i \partial x_j} d \QV{X_i, X_j}(t).
+\end{align*}
+
+\section*{Stochastic Exponential}
+The \emph{stochastic exponential} of $X$ is $\sE_t(X) = \exp({X(t) - \frac12 \QV{X}(t)})$. It satisfies
+\begin{equation*}
+    \sE(0) = 1, \quad \sE(X)\sE(Y) = \sE(X+Y)e^{\QV{X,Y}}, \quad \sE(X)^{-1} = \sE(-X) e^{\QV{X,X}}.
+\end{equation*}
+The process $Z = \sE(X)$ is a positive process and solves the SDE
+\begin{equation*}
+    dZ = Z\,dX, \quad Z(0) = e^{X(0)}.
+\end{equation*}
+
+\section*{Solving Linear ODEs}
+
+The linear \emph{ordinary differential equation}
+\begin{equation*}
+    \frac{dz(t)}{dt} = m(t) + \mu(t)z(t), \quad z(a) = \zeta,
+\end{equation*}
+for $a \le t \le b$ has solution given by
+\begin{equation*}
+    \begin{aligned}
+    z(t) &= \zeta \epsilon_t + \int_a^t \epsilon_t \epsilon_u^{-1} m(u)\,du, \qquad\epsilon_t := \exp\left(\int_a^t \mu(u)\,du\right), \\
+    & = \zeta \exp\Bigl({\int_a^t \mu(u)\,du}\Bigr) + \int_a^t m(u) \exp\Bigl({\int_u^t \mu(r)\,dr}\Bigr)\,du.
+    \end{aligned}
+\end{equation*}
+
+\section*{Solving Linear SDEs}
+
+The linear \emph{stochastic differential equation}
+\begin{equation*}
+    dZ(t) = [m(t)+\mu(t)Z(t)]dt + [q(t)+\sigma(t)Z(t)]\,dW(t), \quad Z(a) = \zeta,
+\end{equation*}
+for $a \le t \le b$ has solution given by
+\begin{equation*}
+    Z(t) = \zeta \sE_t + \int_a^t \sE_t \sE_u^{-1}[m(u)-q(u)\sigma(u)]\,du + \int_a^t \sE_t \sE_u^{-1} q(u)\,dW(u),
+\end{equation*}
+where $\sE_t := \sE_t(X)$ and $X(t) = \int_a^t\mu(u)\,du + \int_a^t\sigma(u)dW(u)$. In other words,
+\begin{equation*}
+    \sE_t = \exp\left(\int_a^t\mu(u)\,du + \int_a^t\sigma(u)\,dW(u) - \frac{1}{2} \int_a^t \sigma(u)^2\,du\right).
+\end{equation*}
+
+
+\section*{Fundamental Theorem of Asset Pricing}
+
+Let $X$ be some $\F_T$-measurable claim, payable at time $T$. The arbitrage-free price $\mathcal{V}$ of $X$ at time $t$ is
+\begin{equation*}
+    \mathcal{V}(t) = \EQ\left[\exp\Bigl(-\int_t^T r(s)\,ds\Bigr) X \Bigl| \F_t \Bigr.\right],
+\end{equation*}
+where $\Q$ is the risk-neutral measure.
+
+\section*{Market Price Of Risk}
+
+Let $X_t = X(t)$ be the price of a non-tradable asset with dynamics $dX(t) =  \mu(t)\,dt + \sigma(t) dW(t)$ where $(\sigma(t))_{t \ge 0}$ and $(\mu(t))_{t \ge 0}$ are previsible processes and $(W(t))_{t \ge 0}$ is a $\P$-Brownian motion. Let $Y(t) := f(X_t)$ be the price of a tradable asset where $f: \R \to \R$ is a deterministic function. Then the \emph{market price of risk} is
+\[ \gamma(t) := \frac{\mu_t f'(X_t) + \frac{1}{2} \sigma_t^2 f''(X_t) - r f(X_t)}{\sigma_t f'(X_t)}, \]
+and the behaviour of $X_t$ under the risk-neutral measure $\Q$ is given by
+\[ dX(t) = \sigma(t) d \tW(t) + \frac{r f(X_t) - \frac{1}{2} \sigma_t^2 f''(X_t)}{f'(X_t)}\,dt. \]
+
+\section*{Black's Model}
+
+Consider a European option with strike price $K$ on a asset with value $V_T$ at maturity time $T$. Let $F_T$ be the forward price of $V_T$, $F_0$ the current forward price. If $\log V_T \sim \Normal(F_0, \sigma^2 T)$ then the Call and Put prices are given by
+\begin{equation*}
+\Call = P(0,T) (F_0 \Phi(d_1) - K \phi(d_2)), \,\, \Put = P(0,T) (K \Phi(-d_2) - F_0 \Phi(-d_1)),
+\end{equation*}
+where $\displaystyle d_1 = \frac{\log(\E(V_T)/K) + \sigma^2T/2}{\sigma \sqrt{T}}$ and $d_2 = d_1 - \sigma \sqrt{T}$.
+
+\section*{Forward Rates, Short Rates, Yields, and Bond Prices}
+
+The \emph{forward rate} at time $t$ that applies between times $T$ and $S$ is defined as
+\begin{equation*}
+    F(t,T,S) = \frac{1}{S-T}\log \frac{P(t,T)}{P(t,S)}.
+\end{equation*}
+The \emph{instantaneous forward rate} at time $t$ is $f(t,T) = \lim_{S \to T} F(t,T,S)$. The \emph{instantaneous risk-free rate} or \emph{short rate} is $r(t) = \lim_{T \to t} f(t,T)$. The \emph{cash account} is given by
+\begin{equation*}
+    B(t) = \exp\left(\int_0^t r(s)\,ds\right),
+\end{equation*}
+and satisfies $dB(t) = r(t) B(t)\,dt$ with $B(0)=1$. The instantaneous forward rates and the yield can be written in terms of the bond prices as
+\[ f(t,T) = - \frac{\partial}{\partial T} \log P(t,T), \quad R(t,T) = - \frac{\log P(t,T)}{T-t}. \]
+Conversely,
+\[ P(t,T) = \exp \left(- \int_t^T f(t,u)\,du \right)\quad \text{and} \quad P(t,T) = \exp(-(T-t)R(t,T)). \]
+
+\section*{Short Rate and No-Arbitrage Models}
+
+The short-rate $r(t)$ follows a process of the form
+\[ dr(t) = a(t,r(t))\,dt + b(t,r(t))\,dW(t),  \]
+where $a(t,r)$ and $b(t,r)$ are chosen following:
+
+\begin{tabular}{|lccccc|}
+\hline
+Model & $a(t,r)$ & $b(t,r)$ & P? & MR? & CF? \\
+\hline
+Merton & $\mu$ & $\sigma$ & N & N & Y \\
+Dothan  &  $\mu r(t)$ & $\sigma r(t)$  & Y & N & Y \\
+Vasicek  & $\alpha (\mu - r(t))$ & $\sigma$ & N & Y & Y \\
+CIR  & $\alpha (\mu - r(t))$ & $\sigma \sqrt{r(t)}$& Y & Y & Y \\
+Pearson-Sun & $\alpha(\mu - r(t))$ & $\sigma \sqrt{r(t)-\beta}$ & Y & Y & Y \\
+Ho \& Lee &  $\theta(t)$ & $\sigma$  & N & N & Y \\
+Hull \& White & $\alpha (\mu(t) - r(t))$ & $\sigma$ & N & Y & Y \\
+Extended Vasicek & $\alpha(t) (\mu(t) - r(t))$ & $\sigma(t)$ & N & Y & Y \\
+Black-Karasinski & $\alpha r(t) (\bar{\mu}(t) - \ln r(t))$ & $\sigma(t) r(t)$ & Y & Y & N\\
+\hline
+\end{tabular}\\
+
+\emph{P means the process stays positive, MR means $r_t$ is mean-reverting, and CF means that a closed-form solution exists for bond prices and for European put and call options.}
+
+\section*{Bond Pricing for Affine Models}
+
+Given an affine short-rate model
+\begin{equation*}
+    dr(t) = (b(t) + \beta(t) r(t))dt+\sqrt{a(t) + \alpha(t) r(t)}d\tW(t),
+\end{equation*}
+the zero-coupon $T$-bond prices at time $t$ have the form
+\begin{equation*}
+    P(t,T) = \exp\left( A(t,T) - B(t,T) r(t) \right),
+\end{equation*}
+where the functions $A$ and $B$ satisfy the system of ODEs:
+\begin{equation*}
+    \begin{aligned}
+        \frac{d}{dt} A(t,T) &= -\frac{1}{2} a(t) B^2(t,T) + b(t) B(t,T), &A(T,T) = 0,\\
+        \frac{d}{dt} B(t,T) &= \frac12 \alpha(t) B^2(t,T) - \beta(t) B(t,T) - 1, & B(T,T) = 0.
+    \end{aligned}
+\end{equation*}
+
+\section*{The Heath-Jarrow-Morton Framework}
+
+Given a initial forward curve $T \mapsto f(0,T)$ then, for every maturity $T$  and under the real-world probability measure $\P$, the forward rate process $t \mapsto f(t,T)$ follows
+\begin{equation*}
+    f(t,T) = f(0,T) + \int_0^t \alpha(s,T)\,ds + \int_0^t \sigma(s,T)'\,dW(s), \quad t \le T,
+\end{equation*}
+where $\alpha(t,T) \in \R$ and $\sigma(t,T) := (\sigma_1(t,T), \ldots, \sigma_n(t,T))$ satisfy the technical conditions: (1) $\alpha$ and $\sigma$ are previsible and adapted to $\F_t$; (2) $\int_0^T\int_0^T |\alpha(s,t)|\,ds\,dt < \infty$ for all $T$; (3) $\sup_{s,t \le T} \|\sigma(s,t)\| < \infty$ for all $T$. The short-rate process is given by
+\begin{equation*}
+    r(t) = f(t,t) = f(0,t) + \int_0^t\alpha(s,t)\,ds + \int_0^t \sigma(s,t)\,dW(s),
+\end{equation*}
+so the cash account and zero coupon $T$-bond prices are well-defined and obtained through
+\[
+B(t) = \exp\left(\int_0^tr(s)\,ds\right), \quad P(t,T) = \exp\left(-\int_t^Tf(t,u)\,du\right).
+\]
+The discounted asset price $Z(t,T) = P(t,T)/B(t)$ satisfies
+\[
+    dZ(t,T) = Z(t,T)\Bigl[\Bigl(\underbrace{\frac12 S^2(t,T) - \int_t^T \alpha(t,u)\,du}_{b(t,T)}\Bigr)\,dt + S(t,T)'\,dW(t)\Bigr],
+\]
+where $S(s,T) := - \int_s^T \sigma(s,u)\,du$. The \emph{HJM drift condition} states that
+\[
+    \text{$\Q$ is EMM (i.e., no arbitrage for bonds)} \quad \iff \quad b(t,T) = -S(t,T) \gamma(t)',
+\]
+where $\tW(t):= W(t) - \int_0^t\gamma(s)\,ds$ is a $\Q$-Brownian motion. If this holds, then under $\Q$, the forward rate process follows
+\[
+    f(t,T) = f(0,T) + \int_0^t \Bigl(\underbrace{\sigma(s,T)\int_s^T\sigma(s,u)'\,du}_{\text{HJM drift}} \Bigr)\,ds + \int_0^t \sigma(s,T)\,d\tW(s),
+\]
+and the discounted asset $Z(t,T)$ satisfies $dZ(t,T) = Z(0,T) \sE_t(X)$ with $$X(t) = \int_0^t S(s,T)'d\tW(s).$$
+
+\section*{The LIBOR Market Model}
+
+For a tenor $\delta > 0$, the \emph{LIBOR rate} $L(T,T,T+\delta)$ is the rate such that an investment of 1 at time $T$ will grow to $1+\delta L(T,T,T+\delta)$ at time $T+\delta$. The \emph{forward LIBOR rate} (i.e., a contract made at time $t$ under which we pay 1 at time $T$ and receive back $1+\delta L(t,T,T+\delta)$ at time $T+\delta$) is defined as
+\begin{equation*}
+    L(t,T) := L(t,T,T+\delta) = \frac{1}{\delta} \left(\frac{P(t,T)}{P(t,T+\delta)} - 1 \right),
+\end{equation*}
+and satisfies $L(T,T) = L(T,T,T+\delta)$.
+
+Under the real-world probability measure $\P$, The LMM assumes that each LIBOR process $(L(t,T_m))_{0 \le t \le T_m}$ satisfies
+\[d L(t,T_m) = L(t,T_m)\left[\mu(t,L(t,T_m))\,dt + \lambda_m(t,L(t,T_m))'dW(t)\right],\]
+where $W = (W^1, \ldots, W^d)$ is a $d$-dimensional Brownian motion with instantaneous correlations
+\[ d\langle W^i, W^j \rangle(t) = \rho_{i,j}(t)\,dt, \quad i,j = 1,2,\ldots, d. \]
+
+The function $\lambda(t, L):[0,T_j]\times \R \to \R^{N \times d}$ is the volatility, and $\mu(t):[0,T_j] \to \R$ is the drift.
+
+Let $0 \le m, n \le N-1$. Then the dynamics of $L(t,T_m)$ under the forward measure $\P_{T_{n+1}}$ is
+    for $m < n$ given by
+    \begin{equation*}
+        dL(t,T_m) = L(t,T_m) \left[ -\lambda(t,T_m) \sum_{r=m+1}^n \sigma_{T_r,T_{r+1}}(t)'\,dt + \lambda(t,T_m)dW^{m}(t)\right]
+    \end{equation*}
+For $m = n$,
+\begin{equation*}
+    dL(t,T_m) = L(t,T_m) \lambda(t,T_m)dW^{m}_t
+\end{equation*}
+and for $m>n$ we have
+\begin{equation*}
+    dL(t,T_m) = L(t,T_m) \left[\lambda(t,T_m) \sum_{r=n+1}^m \sigma_{T_r,T_{r+1}}(t)'\,dt + \lambda(t,T_m)dW^{m}_t\right]
+\end{equation*}
+
+\vfill
+% \hline
+\begin{center}
+{
+\bf
+\scalefont{0.75}
+\vskip0.15em
+\textbf{github.com/daleroberts/math-finance-cheat-sheet}
+\vskip0.15em
+}
+% \hline
+
+\end{center}
+
+\end{document}
