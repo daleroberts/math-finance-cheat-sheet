@@ -3,6 +3,8 @@
 \usepackage[pdftex, a4paper, margin=0.7cm, nohead, nofoot]{geometry}
 \usepackage[utopia]{mathdesign}
 \usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{bbm}
 \usepackage{setspace}
 \usepackage{scalefnt}
 \usepackage{microtype}
@@ -23,7 +25,6 @@
 \newcommand{\QV}[1]{\langle#1\rangle}
 \newcommand{\sE}{\mathcal{E}}
 \newcommand{\tW}{\widetilde W}
-
 \setlength{\parskip}{0pt}
 \setlength{\parindent}{0pt}
 \setlength{\TPHorizModule}{30mm}
@@ -237,7 +238,7 @@ Consider a European option with strike price $K$ on a asset with value $V_T$ at 
 \begin{equation*}
 \Call = P(0,T) (F_0 \Phi(d_1) - K \phi(d_2)), \,\, \Put = P(0,T) (K \Phi(-d_2) - F_0 \Phi(-d_1)),
 \end{equation*}
-where $\displaystyle d_1 = \frac{\log(\E(V_T)/K) + \sigma^2T/2}{\sigma \sqrt{T}}$ and $d_2 = d_1 - \sigma \sqrt{T}$.
+where $\displaystyle d_1 = \frac{\log(\EQ(V_T)/K) + \sigma^2T/2}{\sigma \sqrt{T}}$ and $d_2 = d_1 - \sigma \sqrt{T}$.
 
 \section*{Forward Rates, Short Rates, Yields, and Bond Prices}
 
@@ -254,48 +255,58 @@ and satisfies $dB(t) = r(t) B(t)\,dt$ with $B(0)=1$. The instantaneous forward r
 Conversely,
 \[ P(t,T) = \exp \left(- \int_t^T f(t,u)\,du \right)\quad \text{and} \quad P(t,T) = \exp(-(T-t)R(t,T)). \]
 
-\section*{Short Rate and No-Arbitrage Models}
+\section*{Affine Jump Diffusion (AJD) Models}
 
-The short-rate $r(t)$ follows a process of the form
-\[ dr(t) = a(t,r(t))\,dt + b(t,r(t))\,dW(t),  \]
-where $a(t,r)$ and $b(t,r)$ are chosen following:
+The state vector $X_t$ follows a Markov process solving the SDE
+\begin{equation*}
+dX_t=\mu(X_t)dt +\sigma(X_t)dW_t + dZ_t
+\end{equation*}
 
+where $W$ is an adapted Brownian, and $Z$ is a pure jump process with intensity $\lambda$. The moment generating function of the jump sizes is $\theta(c)=\EQ(\exp(cJ))$. Impose an affine structure on $\mu,\sigma\sigma^T,\lambda$ and the discount rate $R$, possibly time dependent:
+\begin{equation*}
+\mu(x)=K_0+K_1x \quad (\sigma(x)\sigma(x)^T)_{ij}=(H_0)_{ij}+(H_1)_{ij}x
+\quad \lambda(x)=L_0+L_1x \quad R(x)=R_0+R_1x
+\end{equation*}
+Given $X_0$, the risk neutral coefficients ($K,H,L,\theta,R$) completely determine the discounted risk neutral distribution of $X$. Introduce the transform function
+\begin{equation*}
+\psi(u,X_0,T)=\EQ\left[\left.\exp\left(-\int_0^{T}R(X_s)ds\right)e^{u^TX_T}\right|\F_0\right]=e^{\alpha(0,u)+\beta(0,u)^Tx_0}
+\end{equation*}
+where $\alpha$ and $\beta$ solve the Ricatti ODEs subject to $\alpha(T,u)=0,\beta(T,u)=u$:
+\begin{align*}
+-\dot{\beta}(t,u)=&K_1^T\beta(t,u)+\tfrac{1}{2}\beta(t,u)^TH_1\beta(t,u)+L_1(\theta(\beta(t,u))-1)-R_1\\
+-\dot{\alpha}(t,u)=&K_0^T\beta(t,u)+\tfrac{1}{2}\beta(t,u)^TH_0\beta(t,u)+L_0(\theta(\beta(t,u))-1)-R_0
+\end{align*}
+
+\section*{AJD bond pricing} In $\psi$, set $L_i=R_0=u=0$, $R_1=1$ to obtain the zero coupon bond with maturity $T-t$ via the Ricatti ODEs:
+\begin{center}
 \begin{tabular}{|lccccc|}
 \hline
-Model & $a(t,r)$ & $b(t,r)$ & P? & MR? & CF? \\
+Short rate model 	&$K_0$	&$K_1$	&$H_0$	&$H_1$	& P?--MR? \\
 \hline
-Merton & $\mu$ & $\sigma$ & N & N & Y \\
-Dothan  &  $\mu r(t)$ & $\sigma r(t)$  & Y & N & Y \\
-Vasicek  & $\alpha (\mu - r(t))$ & $\sigma$ & N & Y & Y \\
-CIR  & $\alpha (\mu - r(t))$ & $\sigma \sqrt{r(t)}$& Y & Y & Y \\
-Pearson-Sun & $\alpha(\mu - r(t))$ & $\sigma \sqrt{r(t)-\beta}$ & Y & Y & Y \\
-Ho \& Lee &  $\theta(t)$ & $\sigma$  & N & N & Y \\
-Hull \& White & $\alpha (\mu(t) - r(t))$ & $\sigma$ & N & Y & Y \\
-Extended Vasicek & $\alpha(t) (\mu(t) - r(t))$ & $\sigma(t)$ & N & Y & Y \\
-Black-Karasinski & $\alpha r(t) (\bar{\mu}(t) - \ln r(t))$ & $\sigma(t) r(t)$ & Y & Y & N\\
+Merton	&$\mu$ 	& 	  	&$\sigma^2$&  	& N--N \\
+Dothan  & 		& $\mu$ & 		&$\sigma^2$ & Y--N \\
+Vasicek & $\alpha\mu$ &$-\alpha$ & $\sigma^2$&  & N--Y \\
+CIR  	& $\alpha\mu$ &$-\alpha$ &  & $\sigma^2$& Y--Y \\
+Pearson-Sun & $\alpha\mu$ & $-\alpha$ & $-\sigma^2\beta$&$\sigma^2 $ & Y--Y \\
+Ho \& Lee &  $\theta(t)$ & & $\sigma^2$&  & N--N \\
+Hull \& White & $\alpha\mu(t)$ & $-\alpha$ &  $\sigma^2$ & & N--Y \\
+Extended Vasicek & $\alpha(t)\mu(t)$ &  $-\alpha(t)$ & $\sigma(t)^2$ & & N--Y\\
+Black-Karasinski$\dagger$ & $\alpha(t)\bar{\mu}(t)$ & $-\alpha(t)$ & $\sigma(t)^2 $ & & Y--Y\\
 \hline
-\end{tabular}\\
+\end{tabular}
+\end{center}
+\emph{P means the process stays positive, MR means $r_t$ is mean-reverting. Closed form solutions for bond prices and European options exist for all models except for $\dagger$, which describes the evolution of $d\log(r_t)$ instead of $dr_t$.}
 
-\emph{P means the process stays positive, MR means $r_t$ is mean-reverting, and CF means that a closed-form solution exists for bond prices and for European put and call options.}
-
-\section*{Bond Pricing for Affine Models}
-
-Given an affine short-rate model
+\section*{AJD option pricing}
+Define the Fourier transform inversion of the conditional expectation
+\begin{align*}
+G(a,b,y) &= \EQ\left[\exp\left(-\int_0^{T}R(X_s)ds\right)e^{a^TX_T}\mathbbm{1}_{bX_T\leq y}\right]\\
+&=\frac{\psi(a,X_0,T)}{2}-\frac{1}{\pi}\int_0^{\infty}\frac{\Im(\psi(a+ivb,X_0,T)e^{-ivy})}{v}dv
+\end{align*}
+The $i$th entry in $X$ is the log asset price and $k=log(K)$, the log strike. $d$ is a vector whose $i$th element is $1$, else zero. The corresponding call option price is
 \begin{equation*}
-    dr(t) = (b(t) + \beta(t) r(t))dt+\sqrt{a(t) + \alpha(t) r(t)}d\tW(t),
+C=G(d,-d,-k)-KG(0,-d,-k)
 \end{equation*}
-the zero-coupon $T$-bond prices at time $t$ have the form
-\begin{equation*}
-    P(t,T) = \exp\left( A(t,T) - B(t,T) r(t) \right),
-\end{equation*}
-where the functions $A$ and $B$ satisfy the system of ODEs:
-\begin{equation*}
-    \begin{aligned}
-        \frac{d}{dt} A(t,T) &= -\frac{1}{2} a(t) B^2(t,T) + b(t) B(t,T), &A(T,T) = 0,\\
-        \frac{d}{dt} B(t,T) &= \frac12 \alpha(t) B^2(t,T) - \beta(t) B(t,T) - 1, & B(T,T) = 0.
-    \end{aligned}
-\end{equation*}
-
 \section*{The Heath-Jarrow-Morton Framework}
 
 Given a initial forward curve $T \mapsto f(0,T)$ then, for every maturity $T$  and under the real-world probability measure $\P$, the forward rate process $t \mapsto f(t,T)$ follows
