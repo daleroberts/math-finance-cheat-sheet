@@ -23,6 +23,8 @@
 \newcommand{\QV}[1]{\langle#1\rangle}
 \newcommand{\sE}{\mathcal{E}}
 \newcommand{\tW}{\widetilde W}
+\newcommand{\ds}{\textrm{d}s}
+\renewcommand{\d}{\textrm{d}}
 
 \setlength{\parskip}{0pt}
 \setlength{\parindent}{0pt}
@@ -90,6 +92,20 @@ If $X_t = X(t)$ is a diffusion process satisfying $$dX(t) = \mu(t,X_t)\,dt + \si
 In the case $dX(t) = \sigma(t) X(t)\,dW(t)$ for some $\F$-previsible process $(\sigma(t))_{t \ge 0}$, then we have the simpler condition
 \[ \EP \left[ \exp\left(\frac{1}{2} \int_0^T \sigma(s)^2\,ds\right) \right] < \infty\, \Rightarrow \, X \text{ is a martingale}. \]
 
+\section*{Stochastic Integration}
+
+Let $h := \{(h_1(t), h_2(t), \ldots, h_n(t))' : 0 \le t \le T\}$ be a $n$-dimensional
+stochastic process. The process $h$ is in the set of $H_{[0,T]}^2$ processes if, for all $t \in [0,T]$, we have
+\[ \E\bigl[\int_0^t \|h(s)\|^2\,\ds \bigr] < \infty. \]
+Let $W := (W_1, W_2, \ldots, W_n)'$ be a $n$-dimensional Brownian motion, then for every $h \in H_{[0,T]}^2$ the \emph{stochastic integral}
+\[ I_t(h) := \int_0^t h(s)\,\d W_s = \sum_{i=1}^n \int_0^t h_j(s)\,\d W_i(s), \quad 0 \le t \le T, \]
+exists. The stochastic integral has the following properties:
+\begin{itemize}
+	\item linearity: $I_t(\alpha h + \beta g) = \alpha I_t(h) + \beta I_t(g)$ for $h,g \in H_{[0,T]}^2$ and $\alpha,\beta \in \R$;
+	\item The stochastic process $X_t := I_t(h)$ is a continuous martingale if $h \in H_{[0,T}^2$;
+	\item The \emph{It\^o isometry} holds:
+	\[ \E\Bigl[\Bigl(\int_0^T h(s)\,dW_s \Bigr)^2\Bigr] = \int_0^T \E[{\|h(s)\|}^2]\,\ds. \]
+\end{itemize}
 
 \section*{It\^o's Formula}
 For $X_t=X(t)$ given by $dX(t) = \mu(t)\,dt + \sigma(t)\,dW(t)$ and a function $g(t,x)$ that is twice differentiable in $x$ and once in $t$. Then for $Y(t) = g(t,X_t)$, we have
@@ -276,7 +292,9 @@ Black-Karasinski & $\alpha r(t) (\bar{\mu}(t) - \ln r(t))$ & $\sigma(t) r(t)$ & 
 \hline
 \end{tabular}\\
 
-\emph{P means the process stays positive, MR means $r_t$ is mean-reverting, and CF means that a closed-form solution exists for bond prices and for European put and call options.}
+\emph{P means the process stays positive, MR means $r_t$ is mean-reverting, and
+CF means that a closed-form solution exists for bond prices and for European
+put and call options.}\\[1em]
 
 \section*{Bond Pricing for Affine Models}
 
