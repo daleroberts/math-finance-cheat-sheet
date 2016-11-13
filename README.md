@@ -4,6 +4,8 @@ A one page cheat sheet (double-sided) on some of the main tools and models used 
 
 ![thumbnail](https://rawgithub.com/daleroberts/math-finance-cheat-sheet/master/thumb.png)
 
+This cheat sheet is aimed for students and derivative-pricing quants interviewing. In fact, this is what I give my undergraduate students for their final exam. It has a stronger focus on interest-rate derivative results since most "Black Scholes" results are easily derived from scratch. Explicit pricing formulas (e.g., bonds or options under the Vasicek or CIR model) are not given as I typically assume they can also be derived as well (and they make fine exam questions).
+
 ## Contents
 
   * Normal random variables: univariate and multivariate case. Moment generating function.
