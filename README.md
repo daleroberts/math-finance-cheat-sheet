@@ -1,6 +1,6 @@
 # Mathematical Finance Cheat Sheet
 
-A one page cheat sheet (double-sided) on some of the main tools and models used in Mathematical Finance. A 'Brownian Motion only' version can be found in this [branch](https://github.com/daleroberts/math-finance-cheat-sheet/tree/bm-only/).
+A one page cheat sheet (double-sided) on some of the main tools and models used in Mathematical Finance. A 'Brownian Motion only' version can be found in this [branch](https://github.com/daleroberts/math-finance-cheat-sheet/tree/bm-only/). Download the [PDF](https://rawgithub.com/daleroberts/math-finance-cheat-sheet/master/math-finance-cheat-sheet.pdf), here is a thumbnail:
 
 ![thumbnail](https://rawgithub.com/daleroberts/math-finance-cheat-sheet/master/thumb.png)
 
